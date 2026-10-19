@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CROWN - CLUB GlenDo</title>
+    
+    <!-- Fuentes Urbanas y Elegantes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,700;0,900;1,900&family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome para Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. VARIABLES & RESET
+           ========================================================================== */
+        :root {
+            --bg-dark: #08080a;
+            --bg-card: rgba(18, 18, 22, 0.75);
+            --gold-primary: #f39c12;
+            --gold-glow: #ffc107;
+            --red-accent: #e74c3c;
+            --text-light: #f5f5f7;
+            --text-gray: #a0a0ab;
+            --whatsapp-green: #25D366;
+            --whatsapp-dark: #128C7E;
+            --font-main: 'Montserrat', sans-serif;
+            --font-display: 'Orbitron', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Canvas de Partículas de Fondo */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 4px;
+            border: 1px solid var(--gold-primary);
+        }
+
+        /* ==========================================================================
+           2. HEADER & NAVBAR
+           ========================================================================== */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(8, 8, 10, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--gold-primary);
+            text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+        }
+
+        .logo span {
+            color: var(--gold-primary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold-primary);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--gold-primary);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .admin-toggle-btn {
+            background: transparent;
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            padding: 0.5rem 1rem;
+            font-family: var(--font-main);
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .admin-toggle-btn:hover {
+            background: var(--gold-primary);
+            color: #000;
+            box-shadow: 0 0 15px rgba(243, 156, 18, 0.4);
+        }
+
+        /* ==========================================================================
+           3. HERO SECTION
+           ========================================================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8rem 5% 4rem 5%;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(243, 156, 18, 0.1);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.8rem;
+            line-height: 1.1;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0ab 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--gold-glow) 0%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .hero p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--gold-primary), #e67e22);
+            color: #000;
+            padding: 1rem 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.5);
+        }
+
+        .hero-visual {
+            position: relative;
+            z-index: 2;
+            width: 450px;
+            height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-img-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            background: var(--bg-card);
+        }
+
+        .hero-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        /* ==========================================================================
+           4. CATALOG / CATALOGO DE GORRAS
+           ========================================================================== */
+        .catalog-section {
+            padding: 6rem 5%;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--text-gray);
+            font-size: 1rem;
+        }
+
+        .cap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        /* Tarjeta 3D Tilt */
+        .cap-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            backdrop-filter: blur(10px);
+        }
+
+        .cap-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(243, 156, 18, 0.2);
+            border-color: rgba(243, 156, 18, 0.4);
+        }
+
+        .cap-img-wrapper {
+            width: 100%;
+            height: 280px;
+            position: relative;
+            overflow: hidden;
+            background: #121216;
+        }
+
+        .cap-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .cap-card:hover .cap-img-wrapper img {
+            transform: scale(1.08);
+        }
+
+        .cap-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(8, 8, 10, 0.8);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .delete-btn-card {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(231, 76, 60, 0.8);
+            color: #fff;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none; /* Visible solo cuando el panel de admin está habilitado */
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .delete-btn-card:hover {
+            background: var(--red-accent);
+            transform: scale(1.1);
+        }
+
+        .cap-info {
+            padding: 1.5rem;
+        }
+
+        .cap-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .cap-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .cap-price {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--gold-primary);
+        }
+
+        .btn-card-ws {
+            width: 100%;
+            background: var(--whatsapp-green);
+            color: #fff;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-card-ws:hover {
+            background: #1ebc57;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        /* ==========================================================================
+           5. ADMIN PANEL (MODAL / INLINE)
+           ========================================================================== */
+        .admin-panel {
+            background: rgba(18, 18, 22, 0.95);
+            border: 1px solid var(--gold-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 5%;
+            display: none; /* Alternado por el JS */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        .admin-panel h3 {
+            font-family: var(--font-display);
+            color: var(--gold-primary);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-gray);
+            text-transform: uppercase;
+        }
+
+        .form-group input {
+            background: #08080a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-family: var(--font-main);
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--gold-primary);
+        }
+
+        .btn-add-cap {
+            background: var(--gold-primary);
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 45px;
+        }
+
+        .btn-add-cap:hover {
+            background: var(--gold-glow);
+            box-shadow: 0 0 15px rgba(243, 156, 18, 0.5);
+        }
+
+        /* ==========================================================================
+           6. FLOATING WHATSAPP BUTTON (ESTILO OFICIAL Y ANIMADO)
+           ========================================================================== */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--whatsapp-green);
+            color: #FFF;
+            width: 65px;
+            height: 65px;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 32px;
+            box-shadow: 0px 4px 20px rgba(37, 211, 102, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: pulse-ws 2s infinite;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.15) rotate(10deg);
+            background-color: #20ba5a;
+            box-shadow: 0px 8px 25px rgba(37, 211, 102, 0.7);
+        }
+
+        /* Tooltip del Botón de WhatsApp */
+        .whatsapp-float .tooltip {
+            position: absolute;
+            right: 75px;
+            background: rgba(18, 18, 22, 0.9);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateX(10px);
+            border: 1px solid var(--whatsapp-green);
+        }
+
+        .whatsapp-float:hover .tooltip {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        @keyframes pulse-ws {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 18px rgba(37, 211, 102, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+
+        /* ==========================================================================
+           7. FOOTER & ANIMATIONS
+           ========================================================================== */
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3rem 5%;
+            text-align: center;
+            background: #040405;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        footer strong {
+            color: var(--gold-primary);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                gap: 3rem;
+            }
+            .hero-content {
+                max-width: 100%;
+            }
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            .hero-btns {
+                justify-content: center;
+            }
+            .hero-visual {
+                width: 100%;
+                max-width: 350px;
+                height: 350px;
+            }
+            nav ul {
+                display: none; /* Simplificado para móviles */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas para el fondo interactivo de partículas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Header / Barra de Navegación -->
+    <header>
+        <a href="#" class="logo">
+            <i class="fa-solid fa-crown"></i>
+            CROWN<span>CLUB GlenDo</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="#hero">Inicio</a></li>
+                <li><a href="#catalogo">Colección</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+        <button class="admin-toggle-btn" id="adminToggle">
+            <i class="fa-solid fa-lock"></i> MODO CREADOR
+        </button>
+    </header>
+
+    <!-- Secciones Principales -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <span class="hero-badge"><i class="fa-solid fa-fire"></i> GlenDo PREMIUM 2026</span>
+                <h1>Estilo Urbano <span>Sin Limites.</span></h1>
+                <p>Descubre gorras diseñadas con la mayor precisión, actitud de calle y elegancia suprema. Eleva tu presencia con modelos de edición limitada.</p>
+                <div class="hero-btns">
+                    <a href="#catalogo" class="btn-primary">
+                        Ver Colección <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-img-container">
+                    <img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=800&q=80" alt="Gorra Destacada Premium">
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel de Administración del Creador (Se activa con el botón "MODO CREADOR") -->
+        <section class="admin-panel" id="adminPanel">
+            <h3><i class="fa-solid fa-sliders"></i> Panel de Publicación del Creador</h3>
+            <form class="admin-form" id="capForm">
+                <div class="form-group">
+                    <label for="capTitle">Nombre de la Gorra</label>
+                    <input type="text" id="capTitle" placeholder="Ej: Black Diamond Snapback" required>
+                </div>
+                <div class="form-group">
+                    <label for="capPrice">Precio (Bs. / $)</label>
+                    <input type="text" id="capPrice" placeholder="Ej: 180 Bs." required>
+                </div>
+                <div class="form-group">
+                    <label for="capImage">URL de la Foto</label>
+                    <input type="url" id="capImage" placeholder="https://imagen.com/gorra.jpg" required>
+                </div>
+                <button type="submit" class="btn-add-cap">
+                    <i class="fa-solid fa-plus"></i> Publicar Gorra
+                </button>
+            </form>
+        </section>
+
+        <!-- Catálogo de Gorras -->
+        <section class="catalog-section" id="catalogo">
+            <div class="section-header">
+                <h2>Catálogo Exclusivo</h2>
+                <p>Elige tu modelo favorito y adquiérelo directamente por WhatsApp</p>
+            </div>
+
+            <div class="cap-grid" id="capGrid">
+                <!-- Las tarjetas de gorras se cargarán dinámicamente aquí mediante JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <p>&copy; 2026 <strong>CROWN CLUB</strong>. Todos los derechos reservados.</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">Atención personal al cliente vía WhatsApp: +591 71128473</p>
+    </footer>
+
+    <!-- Botón Flotante Directo a WhatsApp -->
+    <a href="https://wa.me/59171128473?text=Hola!%20Vengo%20de%20tu%20pagina%20web%20y%20me%20gustaria%20consultar%20por%20sus%20gorras" 
+       class="whatsapp-float" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Contactar por WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="tooltip">Contactar a WhatsApp</span>
+    </a>
+
+    <!-- ==========================================================================
+       8. JAVASCRIPT LOGIC & ANIMATIONS
+       ========================================================================== -->
+    <script>
+        // --- 1. CONFIGURACIÓN DEL NÚMERO DE WHATSAPP ---
+        const WHATSAPP_NUMBER = "59171128473";
+
+        // --- 2. DATOS INICIALES Y LOCALSTORAGE ---
+        const defaultCaps = [
+            {
+                id: 1,
+                title: "Urban Black Gold Edition",
+                price: "180 Bs.",
+                image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 2,
+                title: "Street Red Snapback",
+                price: "160 Bs.",
+                image: "https://images.unsplash.com/photo-1575428652377-a2d80e2277fc?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 3,
+                title: "Dark Minimalist Trucker",
+                price: "150 Bs.",
+                image: "https://images.unsplash.com/photo-1534215754734-18e55d13e346?auto=format&fit=crop&w=800&q=80"
+            }
+        ];
+
+        // Obtener productos guardados o cargar los por defecto
+        let capCollection = JSON.parse(localStorage.getItem('crown_caps')) || defaultCaps;
+        let isAdminMode = false;
+
+        // Elementos DOM
+        const capGrid = document.getElementById('capGrid');
+        const capForm = document.getElementById('capForm');
+        const adminToggleBtn = document.getElementById('adminToggle');
+        const adminPanel = document.getElementById('adminPanel');
+
+        // --- 3. RENDERIZADO DEL CATÁLOGO ---
+        function renderCaps() {
+            capGrid.innerHTML = '';
+            
+            capCollection.forEach(cap => {
+                const message = encodeURIComponent(`¡Hola! Estoy interesado en comprar la gorra: "${cap.title}" que vi en la página web con el precio de ${cap.price}.`);
+                const wsUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+
+                const cardHTML = `
+                    <div class="cap-card" data-tilt>
+                        <div class="cap-img-wrapper">
+                            <span class="cap-badge">Exclusivo</span>
+                            ${isAdminMode ? `<button class="delete-btn-card" onclick="deleteCap(${cap.id})" title="Eliminar Gorra"><i class="fa-solid fa-trash"></i></button>` : ''}
+                            <img src="${cap.image}" alt="${cap.title}" onerror="this.src='https://via.placeholder.com/400x400/121216/f39c12?text=Crown+Club+Cap'">
+                        </div>
+                        <div class="cap-info">
+                            <h3 class="cap-title">${cap.title}</h3>
+                            <div class="cap-price-row">
+                                <span class="cap-price">${cap.price}</span>
+                            </div>
+                            <a href="${wsUrl}" target="_blank" class="btn-card-ws">
+                                <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                `;
+                capGrid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+
+            // Inicializar efecto 3D Tilt tras el renderizado
+            initCardTilt();
+        }
+
+        // Guardar en LocalStorage
+        function saveToStorage() {
+            localStorage.setItem('crown_caps', JSON.stringify(capCollection));
+        }
+
+        // --- 4. PANEL DE ADMINISTRACIÓN / PUBLICAR GORRAS ---
+        adminToggleBtn.addEventListener('click', () => {
+            isAdminMode = !isAdminMode;
+            if(isAdminMode) {
+                adminPanel.classList.add('active');
+                adminToggleBtn.style.background = 'var(--gold-primary)';
+                adminToggleBtn.style.color = '#000';
+            } else {
+                adminPanel.classList.remove('active');
+                adminToggleBtn.style.background = 'transparent';
+                adminToggleBtn.style.color = 'var(--gold-primary)';
+            }
+            renderCaps(); // Re-renderizar para mostrar u ocultar botones de eliminar
+        });
+
+        // Formulario para Agregar Gorra
+        capForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('capTitle').value;
+            const price = document.getElementById('capPrice').value;
+            const image = document.getElementById('capImage').value;
+
+            const newCap = {
+                id: Date.now(),
+                title,
+                price,
+                image
+            };
+
+            capCollection.unshift(newCap);
+            saveToStorage();
+            renderCaps();
+
+            // Limpiar Formulario
+            capForm.reset();
+            alert('¡Gorra publicada correctamente!');
+        });
+
+        // Eliminar Gorra
+        window.deleteCap = function(id) {
+            if(confirm('¿Estás seguro de que deseas eliminar esta gorra?')) {
+                capCollection = capCollection.filter(cap => cap.id !== id);
+                saveToStorage();
+                renderCaps();
+            }
+        };
+
+        // --- 5. ANIMACIÓN 3D TILT EN CARDS ---
+        function initCardTilt() {
+            const cards = document.querySelectorAll('.cap-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / 15;
+                    const rotateY = (centerX - x) / 15;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+                });
+            });
+        }
+
+        // --- 6. CANVAS ANIMADO DE PARTÍCULAS (FONDO INTERACTIVO) ---
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(243, 156, 18, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const particlesArray = [];
+        for (let i = 0; i < 60; i++) {
+            particlesArray.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // --- INICIALIZAR PÁGINA ---
+        renderCaps();
+    </script>
+</body>
+</html>
